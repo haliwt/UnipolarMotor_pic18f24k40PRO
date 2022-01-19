@@ -37,5 +37,5 @@ typedef enum motorstep{noRun,CCW,CW,slow,middle,fast};
 
 void RunMain(void);
 void MotorRun(void);
-
+void Timer_Function(void);
 #endif 
