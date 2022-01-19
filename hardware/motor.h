@@ -11,6 +11,7 @@ typedef struct _UNIPOLAR{
      uint8_t motor_fast_flag;
      uint8_t motor_middle_flag;
      uint8_t motor_Dir;
+     uint8_t motorRunOrder;
     
 }UNIPOLAR_T;
 
@@ -18,9 +19,11 @@ UNIPOLAR_T motor_t;
 
 void Unipolar_Motor_Initialize(void);
 
-void Unipolar_Motor_Run(uint8_t dir,uint8_t stepvalue);
+void Unipolar_Motor_Run(void);
 
 void Unipolar_MotorStop(void);
+
+void OneCycle_Times(void);
 
 
 #endif 

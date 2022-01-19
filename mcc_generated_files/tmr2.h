@@ -306,7 +306,7 @@ typedef enum
     </code>
 */
 void TMR2_Initialize(void);
-
+void TMR2_Initialize_Period_4ms(void);
 /**
   @Summary
     Configures the Hardware Limit Timer mode.
@@ -767,30 +767,81 @@ void TMR2_LoadPeriodRegister(uint8_t periodVal);
     None
 
   @Returns
-    true - timer match has occured.
-    false - timer match has not occured.
-
-  @Example
-    <code>
-    while(1)
-    {
-        // check the match flag
-        if(TMR2_HasOverflowOccured())
-        {
-            // Do something else...
-
-            // clear the TMR2 match interrupt flag
-            TMR2IF = 0;
-
-            // Reload the TMR2 value
-            TMR2_Reload();
-        }
-    }
-    </code>
+    None
 */
-bool TMR2_HasOverflowOccured(void);
-void TMR2_Initialize_Period_10ms(void);
-void TMR2_Initialize_Period_4ms(void);
+void TMR2_ISR(void);
+
+/**
+  @Summary
+    CallBack function
+
+  @Description
+    This function is called from the timer ISR. User can write your code in this function.
+
+  @Preconditions
+    Initialize  the TMR2 module with interrupt before calling this function.
+
+  @Param
+    None
+
+  @Returns
+    None
+*/
+ void TMR2_CallBack(void);
+/**
+  @Summary
+    Set Timer Interrupt Handler
+
+  @Description
+    This sets the function to be called during the ISR
+
+  @Preconditions
+    Initialize  the TMR2 module with interrupt before calling this.
+
+  @Param
+    Address of function to be set
+
+  @Returns
+    None
+*/
+ void TMR2_SetInterruptHandler(void (* InterruptHandler)(void));
+
+/**
+  @Summary
+    Timer Interrupt Handler
+
+  @Description
+    This is a function pointer to the function that will be called during the ISR
+
+  @Preconditions
+    Initialize  the TMR2 module with interrupt before calling this isr.
+
+  @Param
+    None
+
+  @Returns
+    None
+*/
+extern void (*TMR2_InterruptHandler)(void);
+
+/**
+  @Summary
+    Default Timer Interrupt Handler
+
+  @Description
+    This is the default Interrupt Handler function
+
+  @Preconditions
+    Initialize  the TMR2 module with interrupt before calling this isr.
+
+  @Param
+    None
+
+  @Returns
+    None
+*/
+void TMR2_DefaultInterruptHandler(void);
+
 
  #ifdef __cplusplus  // Provide C++ Compatibility
 

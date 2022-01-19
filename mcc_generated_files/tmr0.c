@@ -56,18 +56,18 @@
 
 /**
  *Section: TMR0 APIs
- * T=4ms 
+ * T=1ms ,prescale =8 ,postscale =1, 8-bit(TMR0H:TMR0L=0XFF) timer0 
+ * Timer0 = ((TMR0H:TMR0L)+1)*(prescale * postscale * 4 * Tosc)=(249+1)*(8*1*4*0.125us)=1000us=1ms
 */
 
 void (*TMR0_InterruptHandler)(void);
-static void TMR0_Timers(void);
 
 void TMR0_Initialize(void)
 {
     // Set TMR0 to the options selected in the User Interface
 
-    // T0CS FOSC/4; T0CKPS 1:16; T0ASYNC synchronised; 
-    T0CON1 = 0x44;
+    // T0CS FOSC/4; T0CKPS 1:8; T0ASYNC synchronised; 
+    T0CON1 = 0x43;
 
     // TMR0H 249; 
     TMR0H = 0xF9;
@@ -84,8 +84,8 @@ void TMR0_Initialize(void)
     // Set Default Interrupt Handler
     TMR0_SetInterruptHandler(TMR0_DefaultInterruptHandler);
 
-    // T0OUTPS 1:2; T0EN enabled; T016BIT 8-bit; 
-    T0CON0 = 0x81;
+    // T0OUTPS 1:1; T0EN enabled; T016BIT 8-bit; 
+    T0CON0 = 0x80;
 }
 
 void TMR0_StartTimer(void)
@@ -136,7 +136,7 @@ void TMR0_ISR(void)
 void TMR0_CallBack(void)
 {
     // Add your custom callback code here
-     TMR0_InterruptHandler=TMR0_Timers;
+
     if(TMR0_InterruptHandler)
     {
         TMR0_InterruptHandler();
@@ -151,45 +151,7 @@ void TMR0_DefaultInterruptHandler(void){
     // add your TMR0 interrupt custom code
     // or set custom function using TMR0_SetInterruptHandler()
 }
-/*********************************************************
- * 
- * Function Name:static void TMR0_Timers(void)
- * Function :interrupter times is T=4ms
- * 
-*********************************************************/
-static void TMR0_Timers(void)
-{
-    static uint16_t tmp,tmp_1s,tmp1;
-  
-    if( run_t.gTim0_30s==1){
-        tmp++;
-        if(tmp>249){
-            tmp_1s++;
-            tmp=0;
-            
-        }
-        if(tmp_1s>29){
-            tmp_1s=0;
-            run_t.gTimer_flag =1;
-        
-        }
-    }
-    if(run_t.gFAN_timers==1){//100ms
-        tmp1++;
-        if(tmp1>24){
-            
-            tmp1=0;
-            run_t.gFAN_numbers++;
-            
-        }
-        
-        
-    }
-    
-    
-    
-
-}
+   
 /**
   End of File
 */

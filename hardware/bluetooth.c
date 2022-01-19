@@ -1,6 +1,5 @@
 #include "../hardware/bluetooth.h"
 #include "../hardware/run.h"
-#include "../hardware/lamp.h"
 #include"../mcc_generated_files/eusart.h"
 
 #define TX_MAX_NUMBER    25
