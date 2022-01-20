@@ -88,13 +88,14 @@ static void FAN_ON(void);
         case noRun:
              run_t.gPowerOn=0;
              run_t.gBleItem=0;
-             TMR2_StopTimer();
+            
             
              Unipolar_MotorStop();
           
               LED1_TurnOff();
               LED2_TurnOff();
             TMR0_StopTimer();
+            TMR2_StopTimer();
             motor_t.motorRunOrder=0xff;
             
               run_t.gfastNumbers++;
@@ -124,6 +125,8 @@ static void FAN_ON(void);
                  run_t.gslowNumbers++;
                   run_t.gmiddleNumbers++;
                    run_t.gfastNumbers++;
+                      motor_t.motorStopStep_flag=0;
+                        motor_t.motorfast_n=0;
                    EUSART_BleResponseEvent(0);
             }
              
@@ -144,6 +147,8 @@ static void FAN_ON(void);
                  run_t.gslowNumbers++;
                   run_t.gmiddleNumbers++;
                    run_t.gccwNumbers++;
+                     motor_t.motorStopStep_flag=0;
+                       motor_t.motorfast_n=0;
                     EUSART_BleResponseEvent(0);
             }
           //  TMR0_StartTimer();
@@ -163,13 +168,15 @@ static void FAN_ON(void);
               LED2_TurnOn();
              if(slowf != run_t.gslowNumbers){
                 slowf = run_t.gslowNumbers;
-                run_t.gMotorState_flag =0xA3;
+                run_t.gMotorState_flag =0xA1;
                 run_t.gStepNumbers =0;
                  motor_t.motorTimer0_numbers=0;
                  run_t.gcwNumbers++;
                  run_t.gfastNumbers++;
                  run_t.gmiddleNumbers++;
                   run_t.gccwNumbers++;
+                    motor_t.motorStopStep_flag=0;
+                    motor_t.motorfast_n=0;
                    EUSART_BleResponseEvent(0);
              }
               if(motor_t.motor_Dir !=CCW){
@@ -185,7 +192,7 @@ static void FAN_ON(void);
               LED2_TurnOff();
               if(middlef !=run_t.gmiddleNumbers){
                 middlef = run_t.gmiddleNumbers;
-                run_t.gMotorState_flag =0xA3;
+                run_t.gMotorState_flag =0xA2;
                 run_t.gStepNumbers =0;
                 motor_t.motorTimer0_numbers=0;
                 
@@ -193,6 +200,8 @@ static void FAN_ON(void);
                  run_t.gslowNumbers++;
                   run_t.gccwNumbers++;
                    run_t.gcwNumbers++;
+                      motor_t.motorStopStep_flag=0;
+                       motor_t.motorfast_n=0;
                     EUSART_BleResponseEvent(0);
              }
               if(motor_t.motor_Dir !=CCW){
@@ -209,12 +218,14 @@ static void FAN_ON(void);
                 fastf = run_t.gfastNumbers;
                 run_t.gMotorState_flag =0xA3;
                 run_t.gStepNumbers =0;
-                 motor_t.motorTimer0_numbers=0;
+                motor_t.motorTimer0_numbers=0;
                  
                  run_t.gslowNumbers++;
                   run_t.gmiddleNumbers++;
                    run_t.gccwNumbers++;
                    run_t.gcwNumbers++;
+                  motor_t.motorStopStep_flag=0;
+                  motor_t.motorfast_n++;
                     EUSART_BleResponseEvent(0);
              }
               if(motor_t.motor_Dir !=CCW){
@@ -278,7 +289,7 @@ static void FAN_ON(void);
         
           CheckRun();
           MotorRun();
-          Timer_Function();  
+        //  Timer_Function();  
         }
     
     
@@ -294,13 +305,13 @@ static void FAN_ON(void);
         LED1_TurnOff();
         LED2_TurnOff();
         }
-        if(run_t.gStepNumbers>=4096){
+        if(motor_t.motorStopStep_flag==1){
                  LED1_TurnOn();
                      LED2_TurnOn();
-                   run_t.gTimer2_fast_flag=1;
+                
                    run_t.gRunOrder=noRun;
                  //  motor_t.motorRunOrder=0xff;
-                   run_t.gMotorState_flag =0;
+                  
          }
  
  

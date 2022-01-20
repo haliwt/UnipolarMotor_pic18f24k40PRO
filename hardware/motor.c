@@ -143,7 +143,7 @@ void Unipolar_Motor_Run(void)
     switch(motor_t.motorRunOrder){
               case fast:
                    MOTOR_EN_RA0_SetLow();
-                   TMR0_StopTimer();
+                   TMR0_StartTimer();
                     TMR2_StartTimer();
                     PWM3_LoadDutyValue(499);
                     UniploarMotor_Phase_One();
@@ -167,7 +167,7 @@ void Unipolar_Motor_Run(void)
              case slow:
                 MOTOR_EN_RA0_SetLow();
                  TMR2_StartTimer();
-                 TMR0_StopTimer();
+                  TMR0_StartTimer();
                   PWM3_LoadDutyValue(499);
                   UniploarMotor_Phase_Half();
              break;
@@ -199,14 +199,8 @@ void Unipolar_MotorStop(void)
  ***********************************************************/
 void OneCycle_Times(void)
 {
-    if(run_t.gMotorState_flag == 1){
-         run_t.gStepNumbers ++;
-         
-    }
-    if(run_t.gMotorState_flag == 2){
-         run_t.gStepNumbers ++;
-    }
-    if(run_t.gMotorState_flag == 0xA1){ //fast
+  
+    if(run_t.gMotorState_flag == 0xA1){ //slow
          run_t.gStepNumbers ++;
          if(run_t.gStepNumbers>=4096){
              run_t.gRunOrder =noRun;
@@ -218,24 +212,38 @@ void OneCycle_Times(void)
              run_t.gRunOrder =noRun;
          }
     }
-     if(run_t.gMotorState_flag == 0xA3){ //slow
-         run_t.gStepNumbers ++;
-          if(run_t.gStepNumbers>=4096){
-             run_t.gRunOrder =noRun;
-         }
-    }
+    // if(run_t.gMotorState_flag == 0xA3){ //fast
+        // run_t.gStepNumbers ++;
+         // if(run_t.gStepNumbers>=4372){
+          //    TMR2_StopTimer();
+          //    run_t.gRunOrder =noRun;
+         //    motor_t.motorStopStep_flag=1;
+         //}
+   // }
     
 
 }
 
-void Timer0_Count(void)
+void Timer0_Count_ISR(void)
 {
-    if(motor_t.motorTimer0_rec==1){
+    
+    if(motor_t.motorTimer0_rec==1 && run_t.gMotorState_flag != 0xA3 ){
      
         motor_t.motorTimer0_numbers++;
-        if(motor_t.motorTimer0_numbers>=6570){
-            run_t.gRunOrder =noRun;
+        if(motor_t.motorTimer0_numbers>=8000){
+             TMR0_StopTimer();
+             run_t.gRunOrder =noRun;
         }
     }
+    if(run_t.gMotorState_flag == 0xA3 && motor_t.motorTimer0_rec !=1 ){ //fast
+         run_t.gStepNumbers ++;
+          if(run_t.gStepNumbers>=18054){//18055
+              TMR0_StopTimer();
+              run_t.gRunOrder =noRun;
+             motor_t.motorStopStep_flag=1;
+          }
+    }
+  
+   
 
 }
