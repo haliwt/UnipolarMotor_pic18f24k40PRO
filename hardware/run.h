@@ -26,6 +26,8 @@ typedef struct{
     uint8_t gfastNumbers;
     uint8_t gmiddleNumbers;
     uint8_t gslowNumbers;
+    uint8_t gccwNumbers;
+    uint8_t gcwNumbers;
     
     uint8_t gMotorState_flag;
     

@@ -6,8 +6,7 @@ static void UniploarMotor_Phase_One(void);
 static void UniploarMotor_Phase_Two(void);
 static void UniploarMotor_Phase_Half(void);
 static void UniploarMotor_Step_Stop(void);
-static void UniploarMotor_DIR_CCW(void);
-static void UniploarMotor_DIR_CW(void);
+
 /*****************************************************
 *
 *Function Name:void Unipolar_Motor_Initialize(void)
@@ -91,7 +90,7 @@ static void UniploarMotor_Step_Stop(void)
 *Return Ref:
 *
 *********************************************************/
-static void UniploarMotor_DIR_CW(void)
+void UniploarMotor_DIR_CW(void)
 {
       
     MOTOR_DIR_RA1_SetHigh();
@@ -105,7 +104,7 @@ static void UniploarMotor_DIR_CW(void)
 *Return Ref:
 *
 *********************************************************/
-static void UniploarMotor_DIR_CCW(void)
+void UniploarMotor_DIR_CCW(void)
 {
       
     MOTOR_DIR_RA1_SetLow();
@@ -143,6 +142,7 @@ void Unipolar_Motor_Run(void)
     
     switch(motor_t.motorRunOrder){
               case fast:
+                   MOTOR_EN_RA0_SetLow();
                    TMR0_StopTimer();
                     TMR2_StartTimer();
                     PWM3_LoadDutyValue(499);
@@ -152,6 +152,7 @@ void Unipolar_Motor_Run(void)
              break;
              
              case middle:
+             
                    TMR0_StartTimer();
                     TMR2_StartTimer();
                   
@@ -164,22 +165,14 @@ void Unipolar_Motor_Run(void)
              break;
              
              case slow:
+                MOTOR_EN_RA0_SetLow();
                  TMR2_StartTimer();
                  TMR0_StopTimer();
                   PWM3_LoadDutyValue(499);
                   UniploarMotor_Phase_Half();
              break;
              
-            case 0xff:
-                
-                run_t.gPowerOn=0;
-                run_t.gBleItem=0;
-                TMR2_StopTimer();
-                TMR0_StopTimer();
-                Unipolar_MotorStop();
-                
-                break;
-             
+          
             
              
              default:

@@ -29,5 +29,7 @@ void Unipolar_MotorStop(void);
 void OneCycle_Times(void);
 void Timer0_Count(void);
 
+void UniploarMotor_DIR_CCW(void);
+void UniploarMotor_DIR_CW(void);
 
 #endif 
