@@ -81,6 +81,9 @@ static void FAN_ON(void);
 ****************************************************************************/  
  void CheckRun(void)
  {
+     
+     static uint8_t mf=1;
+     
      switch(run_t.gRunOrder){
         case noRun:
              run_t.gPowerOn=0;
@@ -93,20 +96,25 @@ static void FAN_ON(void);
               LED2_TurnOff();
             TMR0_StopTimer();
             motor_t.motorRunOrder=0xff;
+            mf++;
+              run_t.gStepNumbers=0;
              break;
              
         case CCW:
             LED2_TurnOff();
             LED1_TurnOn();
             TMR2_StartTimer();
-            run_t.gMotorState_flag =1; //anticlockwise 
+            
+             
             motor_t.motor_Dir =CCW;//
             motor_t. motorRunOrder = middle;
             EUSART_BleResponseEvent(0);
+            if(mf != 0){
+              mf =0;
+              motor_t.motorTimer0_numbers=0;
+              motor_t.motorTimer0_rec=1;
+            }
           
-            motor_t.motorTimer0_numbers=0;
-            TMR0_StartTimer();
-            motor_t.motorTimer0_rec=1;
            
         break;
             
@@ -114,14 +122,17 @@ static void FAN_ON(void);
         case CW:
             LED2_TurnOn();
             LED1_TurnOff();
-           // run_t.gMotorState_flag =2; //clockwise
-            motor_t.motorTimer0_numbers=0;
-            TMR0_StartTimer();
+            if(mf != 0){
+              mf =0;
+              motor_t.motorTimer0_numbers=0;
+              motor_t.motorTimer0_rec=1;
+            }
+          //  TMR0_StartTimer();
             TMR2_StartTimer();
-            motor_t.motorTimer0_rec=1;
+            
             motor_t. motorRunOrder = middle;
             motor_t.motor_Dir =CW;
-            
+           
             EUSART_BleResponseEvent(0);
      
           
@@ -150,7 +161,7 @@ static void FAN_ON(void);
          case fast:
               LED1_TurnOn();
               LED2_TurnOn();
-              TMR0_StartTimer();
+             // TMR0_StartTimer();
              run_t.gMotorState_flag =0xA1;
               motor_t. motorRunOrder = fast;//Unipolar_Motor_Run(motor_t.motor_Dir,1) ;
              run_t.gStepNumbers =0;
@@ -228,8 +239,8 @@ static void FAN_ON(void);
         LED2_TurnOff();
         }
         if(run_t.gStepNumbers>=4096){
-                 LED1_TurnOff();
-                     LED2_TurnOff();
+                 LED1_TurnOn();
+                     LED2_TurnOn();
                    run_t.gTimer2_fast_flag=1;
                    run_t.gRunOrder=noRun;
                  //  motor_t.motorRunOrder=0xff;

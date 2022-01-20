@@ -152,7 +152,7 @@ void Unipolar_Motor_Run(void)
              break;
              
              case middle:
-               
+                   TMR0_StartTimer();
                     TMR2_StartTimer();
                   
                    PWM3_LoadDutyValue(0);
