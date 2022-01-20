@@ -133,13 +133,21 @@ void Unipolar_Motor_Run(void)
         //PWM3_LoadDutyValue(61);//499//CCP1_SetCompareCount(32767);//PWM1_LoadDutyValue(485);    
          MOTOR_EN_RA0_SetLow();
          UniploarMotor_DIR_CW();//UniploarMotor_DIR_CCW();
-        switch(motor_t.motorRunOrder){
+    }
+    else{
+      
+         MOTOR_EN_RA0_SetLow();
+        UniploarMotor_DIR_CCW();//UniploarMotor_DIR_CW();
+        
+    }
+    
+    switch(motor_t.motorRunOrder){
               case fast:
-                if(run_t.gTimer2_fast_flag==0){
+               
                     TMR2_StartTimer();
                     PWM3_LoadDutyValue(499);
                     UniploarMotor_Phase_One();
-                }
+                
               
              break;
              
@@ -149,7 +157,7 @@ void Unipolar_Motor_Run(void)
                   
                    PWM3_LoadDutyValue(0);
                     __delay_us(32);
-                   PWM3_LoadDutyValue(1);
+                   PWM3_LoadDutyValue(499);
                    UniploarMotor_Phase_One();
                
                 
@@ -158,8 +166,7 @@ void Unipolar_Motor_Run(void)
              case slow:
                  TMR2_StartTimer();
                  
-                
-                   PWM3_LoadDutyValue(499);
+                  PWM3_LoadDutyValue(499);
                   UniploarMotor_Phase_Half();
              break;
              
@@ -181,52 +188,10 @@ void Unipolar_Motor_Run(void)
              
         }
         
-    } //
-    if(motor_t.motor_Dir==CCW){//CCW
-         MOTOR_EN_RA0_SetLow();
-        UniploarMotor_DIR_CCW();//UniploarMotor_DIR_CW();
-        switch(motor_t.motorRunOrder){
-            
-             case fast:
-                 TMR2_StartTimer();
-                 
-                 PWM3_LoadDutyValue(499);
-                 UniploarMotor_Phase_One();
-             break;
-             
-             case middle:
-                 TMR2_StartTimer();
-                
-                    PWM3_LoadDutyValue(0);
-                     __delay_us(32);
-                    PWM3_LoadDutyValue(1);
-                   UniploarMotor_Phase_One();
-             break;
-             
-             case slow:
-                 TMR2_StartTimer();
-                 PWM3_LoadDutyValue(499);
-                 UniploarMotor_Phase_Half();
-             break;
-             
-              case 0xff:
-                
-                run_t.gPowerOn=0;
-                run_t.gBleItem=0;
-                TMR2_StopTimer();
-                TMR0_StopTimer();
-                Unipolar_MotorStop();
-                
-                break;
-             
-             default:
-               
-             break;
-        }
-     }
+    }
     
-      Timer_Function();  
-}
+     
+
 
 void Unipolar_MotorStop(void)
 {
@@ -263,7 +228,11 @@ void OneCycle_Times(void)
 void Timer0_Count(void)
 {
     if(motor_t.motorTimer0_rec==1){
+     
         motor_t.motorTimer0_numbers++;
+        if(motor_t.motorTimer0_numbers>=6570){
+            run_t.gRunOrder =noRun;
+        }
     }
 
 }
