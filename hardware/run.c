@@ -82,7 +82,7 @@ static void FAN_ON(void);
  void CheckRun(void)
  {
      
-     static uint8_t mf=1;
+     static uint8_t mf=1,slowf=0xff,middlef=0xff,fastf=0xff;
      
      switch(run_t.gRunOrder){
         case noRun:
@@ -97,7 +97,10 @@ static void FAN_ON(void);
             TMR0_StopTimer();
             motor_t.motorRunOrder=0xff;
             mf++;
-              run_t.gStepNumbers=0;
+              run_t.gfastNumbers++;
+              run_t.gslowNumbers++;
+              run_t.gmiddleNumbers++;
+              
              break;
              
         case CCW:
@@ -142,29 +145,40 @@ static void FAN_ON(void);
          case slow:
               LED1_TurnOn();
               LED2_TurnOn();
-             run_t.gMotorState_flag =0xA3;
+             if(slowf != run_t.gslowNumbers){
+                slowf = run_t.gslowNumbers;
+                run_t.gMotorState_flag =0xA3;
+                run_t.gStepNumbers =0;
+             }
               motor_t. motorRunOrder = slow;//Unipolar_Motor_Run(motor_t.motor_Dir,3);
              EUSART_BleResponseEvent(0);  
-             run_t.gStepNumbers =0;
+             
               
              break;
          case middle:
               LED1_TurnOff();
               LED2_TurnOff();
-             run_t.gMotorState_flag =0xA2;
+              if(middlef !=run_t.gmiddleNumbers){
+                middlef = run_t.gmiddleNumbers;
+                run_t.gMotorState_flag =0xA3;
+                run_t.gStepNumbers =0;
+             }
               motor_t. motorRunOrder = middle;//Unipolar_Motor_Run(motor_t.motor_Dir,2);
              EUSART_BleResponseEvent(0);
-             run_t.gStepNumbers =0;
+           
          
              break;
              
          case fast:
               LED1_TurnOn();
               LED2_TurnOn();
-             // TMR0_StartTimer();
-             run_t.gMotorState_flag =0xA1;
+               if(fastf!= run_t.gfastNumbers){
+                fastf = run_t.gfastNumbers;
+                run_t.gMotorState_flag =0xA3;
+                run_t.gStepNumbers =0;
+             }
               motor_t. motorRunOrder = fast;//Unipolar_Motor_Run(motor_t.motor_Dir,1) ;
-             run_t.gStepNumbers =0;
+            
              EUSART_BleResponseEvent(0);
          
         

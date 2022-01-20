@@ -143,7 +143,7 @@ void Unipolar_Motor_Run(void)
     
     switch(motor_t.motorRunOrder){
               case fast:
-               
+                   TMR0_StopTimer();
                     TMR2_StartTimer();
                     PWM3_LoadDutyValue(499);
                     UniploarMotor_Phase_One();
@@ -165,7 +165,7 @@ void Unipolar_Motor_Run(void)
              
              case slow:
                  TMR2_StartTimer();
-                 
+                 TMR0_StopTimer();
                   PWM3_LoadDutyValue(499);
                   UniploarMotor_Phase_Half();
              break;
@@ -208,18 +208,28 @@ void OneCycle_Times(void)
 {
     if(run_t.gMotorState_flag == 1){
          run_t.gStepNumbers ++;
+         
     }
     if(run_t.gMotorState_flag == 2){
          run_t.gStepNumbers ++;
     }
     if(run_t.gMotorState_flag == 0xA1){ //fast
          run_t.gStepNumbers ++;
+         if(run_t.gStepNumbers>=4096){
+             run_t.gRunOrder =noRun;
+         }
     }
     if(run_t.gMotorState_flag == 0xA2){ //middle
          run_t.gStepNumbers ++;
+          if(run_t.gStepNumbers>=4096){
+             run_t.gRunOrder =noRun;
+         }
     }
      if(run_t.gMotorState_flag == 0xA3){ //slow
          run_t.gStepNumbers ++;
+          if(run_t.gStepNumbers>=4096){
+             run_t.gRunOrder =noRun;
+         }
     }
     
 

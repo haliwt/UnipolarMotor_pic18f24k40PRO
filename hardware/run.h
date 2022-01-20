@@ -23,7 +23,12 @@ typedef struct{
     uint8_t gReadEEPROM_flag;
     uint8_t gEEPROM_start;
     
+    uint8_t gfastNumbers;
+    uint8_t gmiddleNumbers;
+    uint8_t gslowNumbers;
+    
     uint8_t gMotorState_flag;
+    
     uint16_t gStepNumbers;
     
  
